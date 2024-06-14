@@ -1,0 +1,151 @@
+﻿@page "/products"
+@using CMVProject.Controllers
+@using CMVProject.Dialogs.Products
+@using CMVProject.Models
+
+@inject ProductController Controller
+@inject IDialogService Dialog
+@inject ISnackbar Snackbar
+
+<MudTable Items="@_products" Dense="@false" Hover="@true" Bordered="@true" Striped="@false" Filter="new Func<Product, bool>(FilterFuncSearch)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Продукты</MudText>
+        <MudSpacer/>
+        <MudSpacer/>
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+        <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="@(() => Add())" Class="ml-auto">
+            Добавить
+        </MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>Название</MudTh>
+        <MudTh>Поставщик</MudTh>
+        <MudTh>Кладовщик</MudTh>
+        <MudTh>Дата поставки</MudTh>
+        <MudTh>Дата учёта</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="Название">@context.Name</MudTd>
+        <MudTd DataLabel="Поставщик">@context.Provider</MudTd>
+        @if (context.Storekeeper != null)
+        {
+            <MudTd DataLabel="Кладовщик">@context.Storekeeper.Surname @context.Storekeeper.Name 
+                @context.Storekeeper.Patronymic (@context.Storekeeper.Login)</MudTd>
+        }
+        else
+        {
+            <MudTd DataLabel="Кладовщик">Не выбран</MudTd>
+        }
+        <MudTd DataLabel="Дата поставки">@context.DeliveryDate</MudTd>
+        <MudTd DataLabel="Дата учёта">@context.AccountingDate</MudTd>
+        <MudButton Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Edit"
+                    OnClick="() => Edit(context)" Class="ml-auto">
+            Редактировать
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"
+                   OnClick="() => Delete(context.Id)" Class="ml-auto">
+            Удалить
+        </MudButton>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    private string _searchString = "";
+
+    private IEnumerable<Product>? _products = new List<Product>();
+
+    protected override void OnInitialized()
+    {
+        _products = Controller.GetAllProducts();
+    }
+
+    private bool FilterFuncSearch(Product product) => FilterFunc(product, _searchString);
+
+    private bool FilterFunc(Product product, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if ($"{product.Id}".Contains(searchString))
+            return true;
+        if (product.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (product.Storekeeper != null && product.Storekeeper.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (product.Storekeeper != null && product.Storekeeper.Surname.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (product.Storekeeper != null && product.Storekeeper.Patronymic.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (product.Provider.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{product.DeliveryDate}".Contains(searchString))
+            return true;
+        if ($"{product.AccountingDate}".Contains(searchString))
+            return true;
+        return false;
+    }
+
+    private void Delete(int id)
+    {
+        Controller.DeleteProduct(id);
+        StateHasChanged();
+        Snackbar.Add("Продукт успешно удалён", Severity.Success);
+    }
+
+    private async Task Add()
+    {
+        var dialog = await Dialog.ShowAsync<ProductsAddDialog>("Добавление продукт",
+            new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                Position = DialogPosition.Center,
+                DisableBackdropClick = true
+            });
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            StateHasChanged();
+    }
+
+    private async Task Edit(Product product)
+    {
+        var parameters = new DialogParameters<ProductsEditDialog>
+        {
+            {
+                x => x.Product,
+                new Product()
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Provider = product.Provider,
+                    Storekeeper = product.Storekeeper,
+                    DeliveryDate = product.DeliveryDate,
+                    AccountingDate = product.AccountingDate
+                }
+            }
+        };
+    
+        var dialog = await Dialog.ShowAsync<ProductsEditDialog>("Редактирование продукта", parameters,
+            new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                Position = DialogPosition.Center,
+                DisableBackdropClick = true
+            });
+    
+        var result = await dialog.Result;
+    
+        if (!result.Canceled)
+            StateHasChanged();
+    }
+}

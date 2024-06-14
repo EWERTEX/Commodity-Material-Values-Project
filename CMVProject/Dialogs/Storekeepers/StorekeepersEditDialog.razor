@@ -1,0 +1,62 @@
+﻿@using CMVProject.Controllers
+@using CMVProject.Models
+
+@inject UserController Controller
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudItem>
+            <MudPaper>
+                <MudForm @ref="_form" @bind-IsValid="@_success">
+
+                    <MudTextField T="string" @bind-Value="User.Login" Disabled="true" Label="Логин кладовщика"/>
+
+                    <MudTextField T="string" @bind-Value="User.Surname" Label="Фамилия кладовщика" Required="true"
+                                  RequiredError="Поле фамилии должно быть заполнено!" @ref="_surname"/>
+
+                    <MudTextField T="string" @bind-Value="User.Name" Label="Имя кладовщика" Required="true"
+                                  RequiredError="Поле имени должно быть заполнено!" @ref="_name"/>
+
+                    <MudTextField T="string" @bind-Value="User.Patronymic" Label="Отчество кладовщика" Required="true"
+                                  RequiredError="Поле отчества должно быть заполнено!" @ref="_patronymic"/>
+
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Отмена</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Редактировать</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = new();
+    [Parameter] public User User { get; set; } = new();
+
+
+    private bool _success;
+    private MudTextField<string> _surname = new(), _name = new(), _patronymic = new();
+    private MudForm _form = new();
+
+    void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        _form.Validate();
+
+        if (!_success)
+            return;
+
+        Controller.EditUser(new User
+        {
+            Id = User.Id, Login = User.Login, Password = User.Password, Name = _name.Value,
+            Surname = _surname.Value, Patronymic = _patronymic.Value
+        });
+
+        Snackbar.Add("Кладовщик успешно отредактирован", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+}

@@ -1,0 +1,99 @@
+﻿@page "/"
+@page "/authorization"
+
+@using System.Text.RegularExpressions
+@using CMVProject.Controllers
+@using CMVProject.Models
+
+@inject UserController Controller
+@inject NavigationManager Navigation
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudText Align="Align.Center" Class="mb-n4" Typo="Typo.h4">РЕГИСТРАЦИЯ</MudText>
+            <MudForm @ref="_form" @bind-IsValid="@_success">
+
+                <MudTextField T="string" Label="Логин" Validation="@(new Func<string, string?>(LoginValidation))"
+                              Required="true" RequiredError="Поле логина должно быть заполнено!" @ref="_login"/>
+
+                <MudTextField T="string" Label="Фамилия" Required="true" RequiredError="Поле фамилии должно быть заполнено!" @ref="_surname"/>
+
+                <MudTextField T="string" Label="Имя" Required="true" RequiredError="Поле имени должно быть заполнено!" @ref="_name"/>
+
+                <MudTextField T="string" Label="Отчество" Required="true" RequiredError="Поле отчества должно быть заполнено!" @ref="_patronymic"/>
+
+                <MudTextField T="string" Label="Пароль" HelperText="Придумайте надёждный пароль" @ref="_password"
+                              InputType="InputType.Password"
+                              Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                              RequiredError="Поле пароля должно быть заполнено!"/>
+
+                <MudTextField T="string"
+                              Label="Пароль" HelperText="Повторите пароль" InputType="InputType.Password"
+                              Validation="@(new Func<string, string?>(PasswordMatch))"/>
+
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Register" Class="ml-auto">Зарегистрироваться</MudButton>
+                </div>
+
+            </MudForm>
+        </MudPaper>
+    <MudText Align="Align.Start">Уже зарегистрированы?</MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick='() => Navigation.NavigateTo("/login")' Class="ml-auto">Войти</MudButton>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    private bool _success;
+    private MudTextField<string> _password = new(), _login = new(), _surname = new(), _name = new(), _patronymic = new();
+    private MudForm _form = new();
+
+    private static IEnumerable<string> PasswordStrength(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            yield return "Поле пароля должно быть заполнено!";
+            yield break;
+        }
+
+        if (password.Length < 8)
+            yield return "Пароль должен состоять хотя бы из 8 символов";
+
+        if (!Regex.IsMatch(password, @"[A-Z]"))
+            yield return "Пароль должен содержать хотя бы одну латинскую заглавную букву";
+
+        if (!Regex.IsMatch(password, @"[a-z]"))
+            yield return "Пароль должен содержать хотя бы одну латинскую строчную букву";
+
+        if (!Regex.IsMatch(password, @"[0-9]"))
+            yield return "Пароль должен содержать хотя бы одну цифру";
+    }
+
+    private string? PasswordMatch(string password)
+    {
+        return _password.Value != password ? "Пароли не совпадают" : null;
+    }
+
+    private string? LoginValidation(string login)
+    {
+        return Controller.GetAllUsers().Any(user => user.Login == login) ? "Пользователь с таким логином уже зарегистрирован" : null;
+    }
+
+    private void Register()
+    {
+        _form.Validate();
+
+        if (!_success)
+            return;
+
+        Controller.RegisterUser(new User
+        {
+            Login = _login.Value, Password = _password.Value, Name = _name.Value,
+            Surname = _surname.Value, Patronymic = _patronymic.Value
+        });
+
+        Navigation.NavigateTo("/products");
+    }
+
+}

@@ -1,0 +1,70 @@
+﻿@page "/login"
+
+@using CMVProject.Controllers
+
+@inject UserController Controller
+@inject NavigationManager Navigation 
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudText Align="Align.Center" Class="mb-n4" Typo="Typo.h4">ВХОД</MudText>
+            <MudForm @ref="_form" @bind-IsValid="@_success">
+
+                <MudTextField T="string" Label="Логин" @ref="_login" Validation="@(new Func<string, string?>(LoginValidation))"
+                              Required="true" HelperText="Введите логин"/>
+
+                <MudTextField T="string" Label="Пароль" InputType="InputType.Password"
+                              Validation="@(new Func<string, string?>(PasswordValidation))" Required="true"
+                              HelperText="Введите пароль"/>
+
+
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Login" Class="ml-auto">Войти</MudButton>
+                </div>
+
+            </MudForm>
+        </MudPaper>
+        <MudText Align="Align.Start">Ещё не зарегистрированы?</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick='() => Navigation.NavigateTo("/authorization")' Class="ml-auto">Зарегистрироваться</MudButton>
+    </MudItem>
+</MudGrid>
+
+
+@code {
+    private bool _success;
+    private MudTextField<string> _login = new();
+    private MudForm _form = new();
+
+    private string? PasswordValidation(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+            return"Введите пароль";
+        
+        if (Controller.GetAllUsers().Any(user => user.Login == _login.Value && user.Password != password) 
+            && !string.IsNullOrWhiteSpace(_login.Value))
+            return "Неверный пароль";
+
+        return null;
+    }
+    
+
+    private string? LoginValidation(string login)
+    {
+        if (string.IsNullOrWhiteSpace(login))
+            return"Введите логин";
+        
+        return Controller.GetAllUsers().Any(user => user.Login == login) ? null : "Пользователь с таким логином не зарегистрирован";
+    }
+
+    private void Login()
+    {
+        _form.Validate();
+
+        if (!_success)
+            return;
+
+        Navigation.NavigateTo("/products");
+    }
+
+}

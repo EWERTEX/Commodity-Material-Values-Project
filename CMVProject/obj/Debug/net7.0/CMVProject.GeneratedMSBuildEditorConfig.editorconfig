@@ -1,0 +1,73 @@
+is_global = true
+build_property.TargetFramework = net7.0
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = CMVProject
+build_property.RootNamespace = CMVProject
+build_property.ProjectDir = C:\Users\fgfgf\RiderProjects\CMVProject\CMVProject\
+build_property.RazorLangVersion = 7.0
+build_property.SupportLocalizedComponentNames = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.MSBuildProjectDirectory = C:\Users\fgfgf\RiderProjects\CMVProject\CMVProject
+build_property._RazorSourceGeneratorDebug = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/AppBar.razor]
+build_metadata.AdditionalFiles.TargetPath = QXBwQmFyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Dialogs/Products/ProductsAddDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = RGlhbG9nc1xQcm9kdWN0c1xQcm9kdWN0c0FkZERpYWxvZy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Dialogs/Products/ProductsEditDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = RGlhbG9nc1xQcm9kdWN0c1xQcm9kdWN0c0VkaXREaWFsb2cucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Dialogs/Storekeepers/StorekeepersAddDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = RGlhbG9nc1xTdG9yZWtlZXBlcnNcU3RvcmVrZWVwZXJzQWRkRGlhbG9nLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Dialogs/Storekeepers/StorekeepersEditDialog.razor]
+build_metadata.AdditionalFiles.TargetPath = RGlhbG9nc1xTdG9yZWtlZXBlcnNcU3RvcmVrZWVwZXJzRWRpdERpYWxvZy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = TWFpbkxheW91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = TmF2TWVudS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Pages/AuthorizationPage.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXV0aG9yaXphdGlvblBhZ2UucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Pages/LoginPage.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTG9naW5QYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Pages/ProductsPage.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJvZHVjdHNQYWdlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Pages/StorekeepersPage.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcU3RvcmVrZWVwZXJzUGFnZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/fgfgf/RiderProjects/CMVProject/CMVProject/Pages/_Host.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 

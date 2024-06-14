@@ -1,0 +1,134 @@
+﻿@page "/storekeepers"
+
+@using CMVProject.Controllers
+@using CMVProject.Dialogs.Storekeepers
+@using CMVProject.Models
+
+@inject UserController Controller
+@inject IDialogService Dialog
+@inject ISnackbar Snackbar
+
+<MudTable Items="@_users" Dense="@false" Hover="@true" Bordered="@true" Striped="@false" Filter="new Func<User, bool>(FilterFuncSearch)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Кладовщики</MudText>
+        <MudSpacer/>
+        <MudSpacer/>
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
+        </MudTextField>
+        <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.Add"
+                   OnClick="@(() => Add())" Class="ml-auto">
+            Добавить
+        </MudButton>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>ID</MudTh>
+        <MudTh>Логин</MudTh>
+        <MudTh>Фамилия</MudTh>
+        <MudTh>Имя</MudTh>
+        <MudTh>Отчество</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="ID">@context.Id</MudTd>
+        <MudTd DataLabel="Логин">@context.Login</MudTd>
+        <MudTd DataLabel="Фамилия">@context.Surname</MudTd>
+        <MudTd DataLabel="Имя">@context.Name</MudTd>
+        <MudTd DataLabel="Отчество">@context.Patronymic</MudTd>
+        <MudButton Variant="Variant.Filled" Color="Color.Info" StartIcon="@Icons.Material.Filled.Edit"
+                   OnClick="() => Edit(context)" Class="ml-auto">
+            Редактировать
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"
+                   OnClick="() => Delete(context.Id)" Class="ml-auto">
+            Удалить
+        </MudButton>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    private string _searchString = "";
+
+    private IEnumerable<User>? _users = new List<User>();
+
+    protected override void OnInitialized()
+    {
+        _users = Controller.GetAllUsers();
+    }
+
+    private bool FilterFuncSearch(User user) => FilterFunc(user, _searchString);
+
+    private bool FilterFunc(User user, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if ($"{user.Id}".Contains(searchString))
+            return true;
+        if (user.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (user.Surname.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (user.Patronymic.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private void Delete(int id)
+    {
+        Controller.DeleteUser(id);
+        StateHasChanged();
+        Snackbar.Add("Кладовщик успешно удалён", Severity.Success);
+    }
+
+    private async Task Add()
+    {
+        var dialog = await Dialog.ShowAsync<StorekeepersAddDialog>("Добавление кладовщика",
+            new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                FullWidth = true,
+                Position = DialogPosition.Center,
+                DisableBackdropClick = true
+            });
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            StateHasChanged();
+    }
+
+    private async Task Edit(User user)
+    {
+        var parameters = new DialogParameters<StorekeepersEditDialog>
+        {
+            {
+                x => x.User,
+                new User()
+                {
+                    Id = user.Id,
+                    Login = user.Login,
+                    Password = user.Password,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    Patronymic = user.Patronymic
+                }
+            }
+        };
+
+        var dialog = await Dialog.ShowAsync<StorekeepersEditDialog>("Редактирование кладовщика", parameters,
+            new DialogOptions()
+            {
+                MaxWidth = MaxWidth.Medium,
+                // FullWidth = true,
+                Position = DialogPosition.Center,
+                DisableBackdropClick = true
+            });
+
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+            StateHasChanged();
+    }
+}

@@ -1,0 +1,82 @@
+﻿@using CMVProject.Controllers
+@using CMVProject.Models
+@using MudBlazor.Extensions
+
+@inject ProductController ProductController
+@inject UserController UserController
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <MudItem>
+            <MudPaper>
+                <MudForm @ref="_form" @bind-IsValid="@_success">
+
+                    <MudTextField T="string" Label="Название продукта" Required="true" RequiredError="Поле названия продукта должно быть заполнено!" @ref="_name"/>
+
+                    <MudTextField T="string" Label="Поставщик" Required="true" RequiredError="Поле поставщика должно быть заполнено!" @ref="_provider"/>
+
+                    <MudDatePicker Label="Дата поставки" Editable="true" @bind-Date="_deliveryDate" Placeholder="Выберите дату" ShowWeekNumbers="true"
+                                   Required="true" RequiredError="Поле даты поставки должно быть заполнено!"/>
+
+                    <MudDatePicker Label="Дата учёта" Editable="true" @bind-Date="_accountingDate" Placeholder="Выберите дату" ShowWeekNumbers="true"
+                                   Required="true" RequiredError="Поле даты учёта должно быть заполнено!"/>
+
+                    <MudSelect T="User" Label="Кладовщик" @bind-Value="_selected" AnchorOrigin="Origin.BottomCenter">
+                        @if (_storekeepers != null)
+                        {
+                            foreach (var storekeeper in _storekeepers)
+                            {
+                                <MudSelectItem Value="@(storekeeper)"/>
+                            }
+                        }
+                    </MudSelect>
+
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Отмена</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Добавить</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = new();
+
+    private IEnumerable<User>? _storekeepers = new List<User>();
+    private User? _selected;
+    private bool _success;
+    private MudTextField<string> _provider = new(), _name = new();
+    private DateTime? _deliveryDate = DateTime.Now, _accountingDate = DateTime.Now;
+    private MudForm _form = new();
+
+    protected override void OnInitialized()
+    {
+        _storekeepers = UserController.GetAllUsers();
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    private void Submit()
+    {
+        _form.Validate();
+
+        if (!_success)
+            return;
+
+        ProductController.AddProduct(new Product()
+        {
+            Name = _name.Value,
+            Provider = _provider.Value,
+            Storekeeper = _selected,
+            DeliveryDate = _deliveryDate.ToIsoDateString() ?? string.Empty,
+            AccountingDate = _accountingDate.ToIsoDateString() ?? string.Empty
+        });
+
+        Snackbar.Add("Продукт успешно добавлен", Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+}

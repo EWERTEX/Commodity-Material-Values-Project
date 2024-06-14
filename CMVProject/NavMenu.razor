@@ -1,0 +1,15 @@
+﻿<MudDrawer @bind-Open="SideBarOpen" Elevation="1">
+    <MudNavMenu Bordered="true">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h5" Color="Color.Primary" Style="margin-top:10px; margin-left:15px;">Разделы</MudText>
+        </MudDrawerHeader>
+        @* ReSharper disable once CSharpWarnings::CS0618 *@
+        <MudNavLink Href="/products" Icon="@Icons.Filled.Egg">Продукты</MudNavLink>
+        @* ReSharper disable once CSharpWarnings::CS0618 *@
+        <MudNavLink Href="/storekeepers" Icon="@Icons.Filled.People">Кладовщики</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>
+
+@code {
+    [Parameter] public bool SideBarOpen { get; set; }
+}

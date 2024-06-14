@@ -1,0 +1,66 @@
+﻿@inject NavigationManager Navigation
+
+<MudAppBar Elevation="3">
+    @if (Navigation.Uri != Navigation.BaseUri && !Navigation.Uri.Contains("/authorization") && !Navigation.Uri.Contains("/login"))
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                       OnClick="async () => await OnSidebarToggled.InvokeAsync()"/>
+    }
+    <MudText Typo="Typo.h4" class="px-4">Товарно-матриальные ценности</MudText>
+    <MudSpacer/>
+    @if (_isLightMode)
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="ToggleTheme"/>
+    }
+    else
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Brightness5" Color="Color.Inherit" OnClick="ToggleTheme"/>
+    }
+    @if (Navigation.Uri != Navigation.BaseUri && !Navigation.Uri.Contains("/authorization") && !Navigation.Uri.Contains("/login"))
+    {
+        <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.ExitToApp"
+                   OnClick='() => Navigation.NavigateTo("/authorization")' Class="ml-auto">
+            Выйти
+        </MudButton>
+    }
+</MudAppBar>
+
+@code{
+
+    private bool _isLightMode = true;
+    private MudTheme _currentTheme = new MudTheme();
+
+    [Parameter] public EventCallback OnSidebarToggled { get; set; }
+    [Parameter] public EventCallback<MudTheme> OnThemeToggled { get; set; }
+
+    private async Task ToggleTheme()
+    {
+        _isLightMode = !_isLightMode;
+
+        _currentTheme = !_isLightMode ? GenerateDarkTheme() : new MudTheme();
+
+        await OnThemeToggled.InvokeAsync(_currentTheme);
+    }
+
+    private MudTheme GenerateDarkTheme() =>
+        new MudTheme
+        {
+#pragma warning disable CS0618 // Type or member is obsolete
+            Palette = new Palette()
+#pragma warning restore CS0618 // Type or member is obsolete
+            {
+                Black = "#27272f",
+                Background = "#32333d",
+                BackgroundGrey = "#27272f",
+                Surface = "#373740",
+                TextPrimary = "#ffffffb3",
+                TextSecondary = "rgba(255,255,255, 0.50)",
+                AppbarBackground = "#27272f",
+                AppbarText = "#ffffffb3",
+                DrawerBackground = "#27272f",
+                DrawerText = "#ffffffb3",
+                DrawerIcon = "#ffffffb3"
+            }
+        };
+
+}
